@@ -16,12 +16,7 @@ class AdminController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!Auth::user()->isAdmin()) {
-                abort(403, 'Access denied. Admin role required.');
-            }
-            return $next($request);
-        });
+        $this->middleware('admin');
     }
 
     // Admin Dashboard

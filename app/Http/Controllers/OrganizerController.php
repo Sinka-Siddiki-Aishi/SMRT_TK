@@ -15,12 +15,7 @@ class OrganizerController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!Auth::user()->isOrganizer() && !Auth::user()->isAdmin()) {
-                abort(403, 'Access denied. Organizer role required.');
-            }
-            return $next($request);
-        });
+        $this->middleware('organizer');
     }
 
     // Organizer Dashboard
