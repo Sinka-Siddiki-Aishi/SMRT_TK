@@ -18,8 +18,18 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Styles -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    <style>
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
 
     @stack('styles')
 </head>
@@ -76,17 +86,17 @@
                             <i class="fas fa-user-plus mr-1"></i> Register
                         </a>
                     @else
-                        <div class="relative group">
-                            <button class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <div class="relative">
+                            <button id="user-menu-button" onclick="toggleUserDropdown()" class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                 <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                                     <span class="text-white text-xs font-medium">{{ substr(Auth::user()->name, 0, 1) }}</span>
                                 </div>
                                 <span>{{ Auth::user()->name }}</span>
-                                <i class="fas fa-chevron-down text-xs"></i>
+                                <i class="fas fa-chevron-down text-xs transition-transform" id="dropdown-arrow"></i>
                             </button>
 
                             <!-- Dropdown Menu -->
-                            <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 border border-gray-200 opacity-0 invisible transform scale-95 transition-all duration-200 z-50">
                                 <!-- Role Badge -->
                                 <div class="px-4 py-2 border-b border-gray-100">
                                     <div class="text-xs text-gray-500">Signed in as</div>
@@ -244,6 +254,49 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+
+    <script>
+        // User dropdown functionality
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('user-dropdown');
+            const arrow = document.getElementById('dropdown-arrow');
+
+            if (dropdown.classList.contains('opacity-0')) {
+                // Show dropdown
+                dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+                arrow.classList.add('rotate-180');
+            } else {
+                // Hide dropdown
+                dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+                arrow.classList.remove('rotate-180');
+            }
+        }
+
+        // Mobile menu functionality
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('user-dropdown');
+            const button = document.getElementById('user-menu-button');
+            const arrow = document.getElementById('dropdown-arrow');
+
+            if (dropdown && button && !button.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+                dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+                if (arrow) arrow.classList.remove('rotate-180');
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>
