@@ -80,4 +80,9 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
 }
