@@ -72,9 +72,9 @@
                     </div>
 
                     @auth
-                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-semibold text-lg transition-colors mb-4">
+                        <a href="{{ route('bookings.create', $event) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-semibold text-lg transition-colors mb-4 text-center">
                             <i class="fas fa-ticket-alt mr-2"></i>Book Now
-                        </button>
+                        </a>
                     @else
                         <a href="{{ route('login') }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-semibold text-lg transition-colors mb-4 text-center">
                             <i class="fas fa-sign-in-alt mr-2"></i>Login to Book

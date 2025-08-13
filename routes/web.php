@@ -1,29 +1,60 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\AdminController;
+
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\RecommendationController;
 
-// Home
+// Home - Always redirect to login (users must sign in for access)
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
+})->name('home');
+
+// Organizer Dashboard
+Route::middleware(['auth', 'organizer'])->group(function () {
+    Route::get('/organizer/dashboard', [OrganizerController::class, 'dashboard'])->name('organizer.dashboard');
+    Route::get('/organizer/events', [OrganizerController::class, 'events'])->name('organizer.events');
+    Route::get('/organizer/events/create', [OrganizerController::class, 'create'])->name('organizer.events.create');
+    Route::post('/organizer/events', [OrganizerController::class, 'store'])->name('organizer.events.store');
+    Route::get('/organizer/events/{event}/edit', [OrganizerController::class, 'edit'])->name('organizer.events.edit');
+    Route::put('/organizer/events/{event}', [OrganizerController::class, 'update'])->name('organizer.events.update');
+    Route::delete('/organizer/events/{event}', [OrganizerController::class, 'destroy'])->name('organizer.events.delete');
 });
+
+// User Dashboard
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('/booking-history', [UserController::class, 'bookingHistory'])->name('user.booking-history');
+});
+
+// Analytics
+Route::middleware(['auth'])->group(function () {
+    Route::get('/analytics', [AnalyticsController::class, 'dashboard'])->name('analytics.dashboard');
+    Route::get('/analytics/event/{event}', [AnalyticsController::class, 'dashboard'])->name('analytics.event');
+});
+
+// Recommendations
+Route::get('/recommendations', [RecommendationController::class, 'getRecommendations'])->name('recommendations.index');
+Route::get('/api/recommendations', [RecommendationController::class, 'api'])->name('api.recommendations');
 
 // Events
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
-Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 Route::get('/events/search/ajax', [EventController::class, 'search'])->name('events.search');
 Route::get('/events/featured', [EventController::class, 'featured'])->name('events.featured');
 Route::get('/events/top-rated', [EventController::class, 'topRated'])->name('events.top-rated');
 
 // Categories
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show');
+Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 
 // Authentication routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -40,6 +71,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::get('/bookings/{booking}/pdf', [BookingController::class, 'downloadPDF'])->name('bookings.pdf');
+    Route::get('/bookings/{booking}/preview', [BookingController::class, 'previewPDF'])->name('bookings.preview');
+
+    // Ticket verification route
+    Route::get('/tickets/verify/{qr_code}', [BookingController::class, 'verifyQR'])->name('tickets.verify');
+
+    // Profile routes
+    Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/password', [AuthController::class, 'updatePassword'])->name('profile.password');
 
     // Rating routes
     Route::post('/events/{event}/rate', [RatingController::class, 'store'])->name('ratings.store');
@@ -48,11 +88,15 @@ Route::middleware('auth')->group(function () {
 });
 
 // QR Code verification (public)
-Route::get('/tickets/verify/{qrCode}', [BookingController::class, 'verifyQR'])->name('tickets.verify');
 Route::post('/tickets/use/{qrCode}', [BookingController::class, 'useTicket'])->name('tickets.use');
 
 // Event ratings (public)
 Route::get('/events/{event}/ratings', [RatingController::class, 'eventRatings'])->name('events.ratings');
+
+// Test PDF functionality
+Route::middleware('auth')->get('/test-pdf', function () {
+    return view('test-pdf');
+})->name('test.pdf');
 
 // Organizer routes
 Route::middleware(['auth'])->prefix('organizer')->name('organizer.')->group(function () {
@@ -62,33 +106,7 @@ Route::middleware(['auth'])->prefix('organizer')->name('organizer.')->group(func
     Route::post('/events', [OrganizerController::class, 'storeEvent'])->name('events.store');
     Route::get('/events/{event}/edit', [OrganizerController::class, 'editEvent'])->name('events.edit');
     Route::put('/events/{event}', [OrganizerController::class, 'updateEvent'])->name('events.update');
-    Route::post('/events/{event}/cancel', [OrganizerController::class, 'cancelEvent'])->name('events.cancel');
+    Route::delete('/events/{event}', [OrganizerController::class, 'deleteEvent'])->name('events.delete');
 });
 
-// Admin routes
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    // Event management
-    Route::get('/events', [AdminController::class, 'events'])->name('events');
-    Route::post('/events/{event}/approve', [AdminController::class, 'approveEvent'])->name('events.approve');
-    Route::post('/events/{event}/reject', [AdminController::class, 'rejectEvent'])->name('events.reject');
-    Route::post('/events/{event}/toggle-featured', [AdminController::class, 'toggleFeatured'])->name('events.toggle-featured');
-
-    // User management
-    Route::get('/users', [AdminController::class, 'users'])->name('users');
-    Route::post('/users/{user}/role', [AdminController::class, 'changeUserRole'])->name('users.role');
-    Route::post('/users/{user}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
-
-    // Booking management
-    Route::get('/bookings', [AdminController::class, 'bookings'])->name('bookings');
-
-    // Analytics
-    Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
-
-    // Category management
-    Route::get('/categories', [AdminController::class, 'categories'])->name('categories');
-    Route::post('/categories', [AdminController::class, 'storeCategory'])->name('categories.store');
-    Route::put('/categories/{category}', [AdminController::class, 'updateCategory'])->name('categories.update');
-    Route::delete('/categories/{category}', [AdminController::class, 'deleteCategory'])->name('categories.delete');
-});

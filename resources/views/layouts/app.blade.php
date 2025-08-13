@@ -40,7 +40,7 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <a href="{{ url('/') }}" class="flex items-center space-x-2">
+                    <a href="{{ auth()->check() ? route('user.dashboard') : route('login') }}" class="flex items-center space-x-2">
                         <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                             <i class="fas fa-ticket-alt text-white text-sm"></i>
                         </div>
@@ -64,11 +64,7 @@
                     </a>
 
                     @auth
-                        @if(Auth::user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors {{ request()->is('admin*') ? 'text-red-600 bg-red-50' : '' }}">
-                                <i class="fas fa-cog mr-1"></i> Admin
-                            </a>
-                        @elseif(Auth::user()->isOrganizer())
+                        @if(Auth::user()->isOrganizer())
                             <a href="{{ route('organizer.dashboard') }}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors {{ request()->is('organizer*') ? 'text-purple-600 bg-purple-50' : '' }}">
                                 <i class="fas fa-chart-line mr-1"></i> Dashboard
                             </a>
@@ -97,14 +93,12 @@
 
                             <!-- Dropdown Menu -->
                             <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 border border-gray-200 opacity-0 invisible transform scale-95 transition-all duration-200 z-50">
-                                <!-- Role Badge -->
                                 <div class="px-4 py-2 border-b border-gray-100">
                                     <div class="text-xs text-gray-500">Signed in as</div>
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</span>
                                         <span class="px-2 py-1 rounded-full text-xs font-medium
-                                            @if(Auth::user()->isAdmin()) bg-red-100 text-red-800
-                                            @elseif(Auth::user()->isOrganizer()) bg-purple-100 text-purple-800
+                                            @if(Auth::user()->isOrganizer()) bg-purple-100 text-purple-800
                                             @else bg-blue-100 text-blue-800 @endif">
                                             {{ ucfirst(Auth::user()->role) }}
                                         </span>
@@ -112,11 +106,7 @@
                                 </div>
 
                                 <!-- Dashboard Links -->
-                                @if(Auth::user()->isAdmin())
-                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <i class="fas fa-tachometer-alt mr-2 text-red-500"></i> Admin Dashboard
-                                    </a>
-                                @elseif(Auth::user()->isOrganizer())
+                                @if(Auth::user()->isOrganizer())
                                     <a href="{{ route('organizer.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         <i class="fas fa-chart-line mr-2 text-purple-500"></i> Organizer Dashboard
                                     </a>
@@ -129,7 +119,10 @@
                                 <a href="{{ route('bookings.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-ticket-alt mr-2 text-blue-500"></i> My Bookings
                                 </a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <a href="{{ route('user.booking-history') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-history mr-2 text-green-500"></i> Booking History
+                                </a>
+                                <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-user mr-2 text-gray-500"></i> Profile Settings
                                 </a>
 
@@ -167,14 +160,40 @@
                 <a href="{{ route('categories.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                     <i class="fas fa-tags mr-2"></i> Categories
                 </a>
-                @guest
+
+                @auth
+                    <!-- Authenticated User Mobile Links -->
+                    <div class="border-t border-gray-200 pt-2 mt-2">
+                        @if(Auth::user()->isOrganizer())
+                            <a href="{{ route('organizer.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                                <i class="fas fa-chart-line mr-2 text-purple-500"></i> Organizer Dashboard
+                            </a>
+                            <a href="{{ route('organizer.events') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                                <i class="fas fa-calendar-alt mr-2 text-purple-500"></i> My Events
+                            </a>
+                        @endif
+
+                        <a href="{{ route('bookings.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            <i class="fas fa-ticket-alt mr-2 text-blue-500"></i> My Bookings
+                        </a>
+                        <a href="{{ route('user.booking-history') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            <i class="fas fa-history mr-2 text-green-500"></i> Booking History
+                        </a>
+                        <a href="{{ route('profile') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            <i class="fas fa-user mr-2 text-gray-500"></i> Profile Settings
+                        </a>
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            <i class="fas fa-sign-out-alt mr-2 text-gray-500"></i> Logout
+                        </a>
+                    </div>
+                @else
                     <a href="{{ route('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                         <i class="fas fa-sign-in-alt mr-2"></i> Login
                     </a>
                     <a href="{{ route('register') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                         <i class="fas fa-user-plus mr-2"></i> Register
                     </a>
-                @endguest
+                @endauth
             </div>
         </div>
     </nav>

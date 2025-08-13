@@ -71,11 +71,6 @@ class User extends Authenticatable
     }
 
     // Helper methods
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
-
     public function isOrganizer()
     {
         return $this->role === 'organizer';

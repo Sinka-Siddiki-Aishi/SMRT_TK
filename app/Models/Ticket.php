@@ -1,61 +1,91 @@
 <?php
 
+
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+
 
 class Ticket extends Model
 {
-    protected $fillable = [
-        'ticket_number',
-        'booking_id',
-        'user_id',
-        'event_id',
-        'ticket_type',
-        'qr_code',
-        'status',
-        'used_at',
-        'seat_number',
-        'section',
-    ];
+   protected $fillable = [
+       'ticket_number',
+       'booking_id',
+       'user_id',
+       'event_id',
+       'ticket_type',
+       'qr_code',
+       'status',
+       'used_at',
+       'seat_number',
+       'section',
+   ];
 
-    protected $casts = [
-        'used_at' => 'datetime',
-    ];
 
-    // Relationships
-    public function booking()
-    {
-        return $this->belongsTo(Booking::class);
-    }
+   protected $casts = [
+       'used_at' => 'datetime',
+   ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
-    public function event()
-    {
-        return $this->belongsTo(Event::class);
-    }
+   // Relationships
+   public function booking()
+   {
+       return $this->belongsTo(Booking::class);
+   }
 
-    // Helper methods
-    public function markAsUsed()
-    {
-        $this->update([
-            'status' => 'used',
-            'used_at' => now(),
-        ]);
-    }
 
-    public function isValid()
-    {
-        return $this->status === 'active' &&
-               $this->event->date > now();
-    }
+   public function user()
+   {
+       return $this->belongsTo(User::class);
+   }
 
-    public function getQRCodeUrl()
-    {
-        return route('tickets.verify', $this->qr_code);
-    }
+
+   public function event()
+   {
+       return $this->belongsTo(Event::class);
+   }
+
+
+   // Helper methods
+   public function markAsUsed()
+   {
+       $this->update([
+           'status' => 'used',
+           'used_at' => now(),
+       ]);
+   }
+
+
+   public function isValid()
+   {
+       return $this->status === 'active' &&
+              $this->event->date > now();
+   }
+
+
+   public function getQRCodeUrl()
+   {
+       return route('tickets.verify', $this->qr_code);
+   }
+
+
+   public function generateQRCode($size = 200)
+   {
+       $qrCode = new QrCode($this->getQRCodeUrl());
+       $qrCode->setSize($size);
+       $qrCode->setMargin(10);
+
+       $writer = new PngWriter();
+       $result = $writer->write($qrCode);
+
+       return 'data:image/png;base64,' . base64_encode($result->getString());
+   }
 }
+
+
+
+
+

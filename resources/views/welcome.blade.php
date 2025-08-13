@@ -7,16 +7,18 @@
 <section class="relative bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 overflow-hidden">
     <!-- Background Pattern -->
     <div class="absolute inset-0 bg-black opacity-20"></div>
-    <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.1"><circle cx="30" cy="30" r="2"/></g></svg>');"></div>
+    <div class="absolute inset-0 opacity-10">
+        <div class="w-full h-full" style="background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
+    </div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
         <div class="text-center">
             <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                Discover Amazing
-                <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">Events</span>
+                Welcome back to
+                <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">SmartTix</span>
             </h1>
             <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                From concerts to conferences, workshops to festivals - find and book tickets for the best events in your city
+                Ready to discover your next amazing experience? Browse events, book tickets, and create unforgettable memories.
             </p>
             
             <!-- Search Bar -->
@@ -46,15 +48,39 @@
             
             <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ route('events.index') }}" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
-                    <i class="fas fa-calendar-alt mr-2"></i>Browse All Events
-                </a>
-                @guest
-                <a href="{{ route('register') }}" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-flex items-center justify-center">
-                    <i class="fas fa-user-plus mr-2"></i>Join SmartTix
-                </a>
-                @endguest
+                @auth
+                    <!-- Authenticated User Buttons -->
+                    <a href="{{ route('events.index') }}" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
+                        <i class="fas fa-calendar-alt mr-2"></i>Browse All Events
+                    </a>
+                    @if(Auth::user()->isOrganizer())
+                        <a href="{{ route('organizer.dashboard') }}" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-flex items-center justify-center">
+                            <i class="fas fa-chart-line mr-2"></i>My Dashboard
+                        </a>
+                    @endif
+                @else
+                    <!-- Guest User Buttons -->
+                    <a href="{{ route('events.index') }}" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
+                        <i class="fas fa-calendar-alt mr-2"></i>Browse Events
+                    </a>
+                    <a href="{{ route('register') }}" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-flex items-center justify-center">
+                        <i class="fas fa-user-plus mr-2"></i>Create Account
+                    </a>
+                    <a href="{{ route('login') }}" class="bg-yellow-500 hover:bg-yellow-600 text-black px-8 py-4 rounded-lg font-semibold transition-colors inline-flex items-center justify-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                    </a>
+                @endauth
             </div>
+
+            @guest
+            <!-- Guest User Notice -->
+            <div class="mt-6 text-center">
+                <p class="text-blue-100 text-lg">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Create an account to book events or organize your own!
+                </p>
+            </div>
+            @endguest
         </div>
     </div>
     
@@ -64,93 +90,7 @@
     <div class="absolute top-1/2 left-1/4 w-12 h-12 bg-green-400 rounded-full opacity-20 animate-pulse delay-500"></div>
 </section>
 
-<!-- Demo Access Section -->
-@guest
-<section class="py-16 bg-gradient-to-r from-blue-50 to-purple-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">🎯 Try Different User Experiences</h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Experience SmartTix from different perspectives. Click any demo button to auto-login and explore the platform.
-            </p>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Admin Demo -->
-            <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-red-200 hover:border-red-400 transition-all hover:shadow-xl">
-                <div class="text-center">
-                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-crown text-red-600 text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Admin Dashboard</h3>
-                    <p class="text-gray-600 mb-6">Complete platform control and analytics</p>
-                    <div class="space-y-2 text-sm text-gray-500 mb-8">
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Event approval workflow</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>User management system</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Revenue analytics</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Platform configuration</div>
-                    </div>
-                    <button onclick="loginAs('admin@smarttix.com')"
-                            class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Try Admin Access
-                    </button>
-                </div>
-            </div>
-
-            <!-- Organizer Demo -->
-            <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-purple-200 hover:border-purple-400 transition-all hover:shadow-xl">
-                <div class="text-center">
-                    <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-chart-line text-purple-600 text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Organizer Dashboard</h3>
-                    <p class="text-gray-600 mb-6">Create and manage your events</p>
-                    <div class="space-y-2 text-sm text-gray-500 mb-8">
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Event creation tools</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Booking management</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Revenue tracking</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Performance insights</div>
-                    </div>
-                    <button onclick="loginAs('organizer@smarttix.com')"
-                            class="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Try Organizer Access
-                    </button>
-                </div>
-            </div>
-
-            <!-- User Demo -->
-            <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-xl">
-                <div class="text-center">
-                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-ticket-alt text-blue-600 text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">User Experience</h3>
-                    <p class="text-gray-600 mb-6">Discover and book amazing events</p>
-                    <div class="space-y-2 text-sm text-gray-500 mb-8">
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Smart event discovery</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Instant ticket booking</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>QR code tickets</div>
-                        <div class="flex items-center justify-center"><i class="fas fa-check text-green-500 mr-2"></i>Rating & reviews</div>
-                    </div>
-                    <button onclick="loginAs('user@smarttix.com')"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Try User Access
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-12 text-center">
-            <div class="inline-flex items-center px-6 py-3 bg-yellow-100 border border-yellow-300 rounded-lg">
-                <i class="fas fa-info-circle text-yellow-600 mr-3"></i>
-                <span class="text-yellow-800">
-                    <strong>Demo Note:</strong> All demo accounts use password "password". Click any button to experience different user roles instantly.
-                </span>
-            </div>
-        </div>
-    </div>
-</section>
-@endguest
 
 <!-- Stats Section -->
 <section class="py-16 bg-white">
@@ -370,39 +310,4 @@
 </section>
 @endsection
 
-@push('scripts')
-<script>
-function loginAs(email) {
-    // Create a form to submit login credentials
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '{{ route("login") }}';
-    form.style.display = 'none';
 
-    // Add CSRF token
-    const csrfToken = document.createElement('input');
-    csrfToken.type = 'hidden';
-    csrfToken.name = '_token';
-    csrfToken.value = '{{ csrf_token() }}';
-    form.appendChild(csrfToken);
-
-    // Add email
-    const emailInput = document.createElement('input');
-    emailInput.type = 'hidden';
-    emailInput.name = 'email';
-    emailInput.value = email;
-    form.appendChild(emailInput);
-
-    // Add password
-    const passwordInput = document.createElement('input');
-    passwordInput.type = 'hidden';
-    passwordInput.name = 'password';
-    passwordInput.value = 'password';
-    form.appendChild(passwordInput);
-
-    // Submit form
-    document.body.appendChild(form);
-    form.submit();
-}
-</script>
-@endpush

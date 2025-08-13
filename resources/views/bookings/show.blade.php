@@ -124,11 +124,25 @@
                     
                     <div class="space-y-4">
                         <!-- Download PDF -->
-                        <a href="{{ route('bookings.pdf', $booking) }}" 
+                        <a href="{{ route('bookings.pdf', $booking) }}"
                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
                             <i class="fas fa-download mr-2"></i>
                             Download PDF Tickets
                         </a>
+
+                        <!-- Preview PDF -->
+                        <a href="{{ route('bookings.preview', $booking) }}" target="_blank"
+                           class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
+                            <i class="fas fa-eye mr-2"></i>
+                            Preview PDF
+                        </a>
+
+                        <!-- Print Tickets -->
+                        <button onclick="printTickets()"
+                                class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
+                            <i class="fas fa-print mr-2"></i>
+                            Print Tickets
+                        </button>
 
                         <!-- Add to Calendar -->
                         <button onclick="addToCalendar()" 
@@ -264,5 +278,19 @@ document.getElementById('qr-modal').addEventListener('click', function(e) {
         closeQRModal();
     }
 });
+
+// Print tickets function
+function printTickets() {
+    // Open PDF in new window for printing
+    const pdfUrl = "{{ route('bookings.pdf', $booking) }}";
+    const printWindow = window.open(pdfUrl, '_blank');
+
+    // Wait for PDF to load then trigger print
+    printWindow.onload = function() {
+        setTimeout(function() {
+            printWindow.print();
+        }, 1000);
+    };
+}
 </script>
 @endpush

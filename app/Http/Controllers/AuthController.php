@@ -1,77 +1,138 @@
 <?php
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
+   public function showLoginForm()
+   {
+       return view('auth.login');
+   }
 
-    public function showRegistrationForm()
-    {
-        return view('auth.register');
-    }
 
-    public function showRegisterForm()
-    {
-        return view('auth.register');
-    }
+   public function showRegistrationForm()
+   {
+       return view('auth.register');
+   }
 
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
 
-            // Redirect based on user role
-            if ($user->isAdmin()) {
-                return redirect()->intended(route('admin.dashboard'));
-            } elseif ($user->isOrganizer()) {
-                return redirect()->intended(route('organizer.dashboard'));
-            }
+   public function showRegisterForm()
+   {
+       return view('auth.register');
+   }
 
-            return redirect()->intended('/');
-        }
-        return back()->withErrors([
-            'email' => 'Invalid credentials.',
-        ]);
-    }
 
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|in:user,organizer',
-        ]);
+   public function login(Request $request)
+   {
+       $credentials = $request->only('email', 'password');
+       if (Auth::attempt($credentials)) {
+           $user = Auth::user();
 
-        $user = \App\Models\User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role' => $request->role,
-        ]);
 
-        Auth::login($user);
+           // Redirect based on user role
+           if ($user->isOrganizer()) {
+               return redirect()->intended(route('organizer.dashboard'));
+           }
 
-        // Redirect based on role
-        if ($user->isOrganizer()) {
-            return redirect()->route('organizer.dashboard');
-        }
+           return redirect()->intended(route('user.dashboard'));
+       }
+       return back()->withErrors([
+           'email' => 'Invalid credentials.',
+       ]);
+   }
 
-        return redirect('/');
-    }
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
-    }
+   public function register(Request $request)
+   {
+       $request->validate([
+           'name' => 'required|string|max:255',
+           'email' => 'required|string|email|max:255|unique:users',
+           'password' => 'required|string|min:6|confirmed',
+           'role' => 'required|in:user,organizer',
+       ]);
+
+
+       $user = \App\Models\User::create([
+           'name' => $request->name,
+           'email' => $request->email,
+           'password' => bcrypt($request->password),
+           'role' => $request->role,
+       ]);
+
+
+       Auth::login($user);
+
+
+       // Redirect based on role
+       if ($user->isOrganizer()) {
+           return redirect()->route('organizer.dashboard');
+       }
+
+
+       return redirect('/');
+   }
+
+
+   public function logout(Request $request)
+   {
+       Auth::logout();
+       $request->session()->invalidate();
+       $request->session()->regenerateToken();
+       return redirect()->route('login')->with('success', 'You have been logged out successfully.');
+   }
+
+
+   public function profile()
+   {
+       return view('auth.profile');
+   }
+
+
+   public function updateProfile(Request $request)
+   {
+       $request->validate([
+           'name' => 'required|string|max:255',
+           'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
+           'phone' => 'nullable|string|max:20',
+           'address' => 'nullable|string|max:500',
+       ]);
+
+
+       $user = Auth::user();
+       $user->update($request->only(['name', 'email', 'phone', 'address']));
+
+
+       return back()->with('success', 'Profile updated successfully!');
+   }
+
+
+   public function updatePassword(Request $request)
+   {
+       $request->validate([
+           'current_password' => 'required',
+           'password' => 'required|string|min:8|confirmed',
+       ]);
+
+
+       $user = Auth::user();
+
+
+       if (!Hash::check($request->current_password, $user->password)) {
+           return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+       }
+
+
+       $user->update([
+           'password' => Hash::make($request->password),
+       ]);
+
+
+       return back()->with('success', 'Password updated successfully!');
+   }
 }
+

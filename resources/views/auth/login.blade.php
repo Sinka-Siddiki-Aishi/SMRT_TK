@@ -120,56 +120,10 @@
                     </button>
                 </div>
 
-                <!-- Divider -->
-                <div class="mt-6">
-                    <div class="relative">
-                        <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">Or continue with</span>
-                        </div>
-                    </div>
 
-                    <!-- Demo Accounts -->
-                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-                        <h4 class="text-sm font-medium text-blue-800 mb-3">🎯 Demo Accounts (Click to auto-fill):</h4>
-                        <div class="space-y-2">
-                            <button type="button" onclick="fillLogin('admin@smarttix.com', 'password')"
-                                    class="w-full text-left p-2 bg-white rounded border hover:bg-gray-50 transition-colors">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-700">👑 Admin Account</span>
-                                    <span class="text-xs text-gray-500">admin@smarttix.com</span>
-                                </div>
-                            </button>
-                            <button type="button" onclick="fillLogin('organizer@smarttix.com', 'password')"
-                                    class="w-full text-left p-2 bg-white rounded border hover:bg-gray-50 transition-colors">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-700">🎪 Organizer Account</span>
-                                    <span class="text-xs text-gray-500">organizer@smarttix.com</span>
-                                </div>
-                            </button>
-                            <button type="button" onclick="fillLogin('user@smarttix.com', 'password')"
-                                    class="w-full text-left p-2 bg-white rounded border hover:bg-gray-50 transition-colors">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-700">👤 Regular User</span>
-                                    <span class="text-xs text-gray-500">user@smarttix.com</span>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </form>
         </div>
     </div>
 </div>
 @endsection
 
-@push('scripts')
-<script>
-function fillLogin(email, password) {
-    document.getElementById('email').value = email;
-    document.getElementById('password').value = password;
-}
-</script>
-@endpush

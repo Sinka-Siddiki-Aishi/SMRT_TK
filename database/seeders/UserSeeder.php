@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\User;
 
 class UserSeeder extends Seeder
 {
@@ -13,7 +11,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+<<<<<<< HEAD
+        // No demo accounts - users will register themselves
+=======
         // No demo users - users must register themselves
         // This seeder is kept for future use if needed
+>>>>>>> 29faf60abfb9fc6b3894e9a6160c4668c7fa1328
     }
 }

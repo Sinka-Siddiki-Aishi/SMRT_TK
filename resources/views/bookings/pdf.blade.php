@@ -21,27 +21,50 @@
         }
         
         .ticket-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .ticket-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            background-size: 30px 30px;
         }
         
         .logo {
             font-size: 28px;
             font-weight: bold;
             margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo::before {
+            content: '🎫';
+            margin-right: 10px;
         }
         
         .ticket-title {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
         }
         
         .booking-number {
             font-size: 14px;
             opacity: 0.9;
+            position: relative;
+            z-index: 1;
         }
         
         .ticket-body {
@@ -136,8 +159,8 @@
         }
         
         .qr-code {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border: 2px solid #ddd;
             margin: 0 auto 10px;
             display: flex;
@@ -146,6 +169,7 @@
             background: #f8f9fa;
             font-size: 12px;
             color: #666;
+            border-radius: 8px;
         }
         
         .qr-text {
@@ -224,7 +248,7 @@
     <div class="ticket-container">
         <!-- Header -->
         <div class="ticket-header">
-            <div class="logo">🎫 SmartTix</div>
+            <div class="logo">SmartTix</div>
             <div class="ticket-title">Event Ticket</div>
             <div class="booking-number">Booking #{{ $booking->booking_number }}</div>
         </div>
@@ -291,8 +315,7 @@
                         </div>
                         <div class="qr-code-section">
                             <div class="qr-code">
-                                QR CODE<br>
-                                <small>{{ substr($ticket->qr_code, 0, 8) }}...</small>
+                                <img src="{{ $ticket->generateQRCode(150) }}" alt="QR Code" style="width: 100px; height: 100px; border-radius: 4px;">
                             </div>
                             <div class="qr-text">{{ $ticket->qr_code }}</div>
                         </div>
