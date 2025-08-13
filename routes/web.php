@@ -93,11 +93,6 @@ Route::post('/tickets/use/{qrCode}', [BookingController::class, 'useTicket'])->n
 // Event ratings (public)
 Route::get('/events/{event}/ratings', [RatingController::class, 'eventRatings'])->name('events.ratings');
 
-// Test PDF functionality
-Route::middleware('auth')->get('/test-pdf', function () {
-    return view('test-pdf');
-})->name('test.pdf');
-
 // Organizer routes
 Route::middleware(['auth'])->prefix('organizer')->name('organizer.')->group(function () {
     Route::get('/dashboard', [OrganizerController::class, 'dashboard'])->name('dashboard');

@@ -93,15 +93,6 @@
                     </div>
                 </a>
 
-                <a href="{{ route('test.pdf') }}"
-                   class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <i class="fas fa-file-pdf text-red-500 text-xl mr-3"></i>
-                    <div>
-                        <div class="font-medium text-gray-900">PDF Tickets Demo</div>
-                        <div class="text-sm text-gray-600">Test PDF generation</div>
-                    </div>
-                </a>
-
                 <a href="{{ route('profile') }}"
                    class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <i class="fas fa-user text-gray-500 text-xl mr-3"></i>

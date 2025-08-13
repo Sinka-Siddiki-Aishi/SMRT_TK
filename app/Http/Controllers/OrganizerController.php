@@ -115,7 +115,7 @@ class OrganizerController extends Controller
        $eventData = $request->all();
        $eventData['organizer_id'] = Auth::id();
        $eventData['available_tickets'] = $request->capacity;
-       $eventData['status'] = 'pending'; // Requires admin approval
+       $eventData['status'] = 'approved'; // Immediately visible to all users
 
        // Combine date and time
        if ($request->date && $request->time) {
