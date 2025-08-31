@@ -53,29 +53,8 @@ class Booking extends Model
         return $this->hasMany(Ticket::class);
     }
 
-    // Helper methods
-    public function generateTickets()
-    {
-        for ($i = 0; $i < $this->quantity; $i++) {
-            Ticket::create([
-                'ticket_number' => 'TK' . strtoupper(Str::random(10)),
-                'booking_id' => $this->id,
-                'user_id' => $this->user_id,
-                'event_id' => $this->event_id,
-                'ticket_type' => $this->ticket_type,
-                'qr_code' => $this->generateQRCode(),
-            ]);
-        }
-    }
-
-    private function generateQRCode()
-    {
-        return 'QR' . strtoupper(Str::random(16));
-    }
-
     public function canBeCancelled()
     {
-        return $this->status === 'confirmed' &&
-               $this->event->date > now()->addHours(24);
+        return $this->event->date->isFuture();
     }
 }

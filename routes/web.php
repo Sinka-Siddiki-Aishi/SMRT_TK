@@ -19,19 +19,13 @@ Route::get('/', function () {
 })->name('home');
 
 // Organizer Dashboard
-Route::middleware(['auth', 'organizer'])->group(function () {
-    Route::get('/organizer/dashboard', [OrganizerController::class, 'dashboard'])->name('organizer.dashboard');
-    Route::get('/organizer/events', [OrganizerController::class, 'events'])->name('organizer.events');
-    Route::get('/organizer/events/create', [OrganizerController::class, 'create'])->name('organizer.events.create');
-    Route::post('/organizer/events', [OrganizerController::class, 'store'])->name('organizer.events.store');
-    Route::get('/organizer/events/{event}/edit', [OrganizerController::class, 'edit'])->name('organizer.events.edit');
-    Route::put('/organizer/events/{event}', [OrganizerController::class, 'update'])->name('organizer.events.update');
-    Route::delete('/organizer/events/{event}', [OrganizerController::class, 'destroy'])->name('organizer.events.delete');
-});
+
 
 // User Dashboard
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+        Route::get('/user/wallet', [UserController::class, 'wallet'])->name('user.wallet');
+    Route::post('/user/wallet/recharge', [UserController::class, 'recharge'])->name('user.wallet.recharge');
     Route::get('/booking-history', [UserController::class, 'bookingHistory'])->name('user.booking-history');
 });
 
@@ -94,7 +88,7 @@ Route::post('/tickets/use/{qrCode}', [BookingController::class, 'useTicket'])->n
 Route::get('/events/{event}/ratings', [RatingController::class, 'eventRatings'])->name('events.ratings');
 
 // Organizer routes
-Route::middleware(['auth'])->prefix('organizer')->name('organizer.')->group(function () {
+Route::middleware(['auth', 'organizer'])->prefix('organizer')->name('organizer.')->group(function () {
     Route::get('/dashboard', [OrganizerController::class, 'dashboard'])->name('dashboard');
     Route::get('/events', [OrganizerController::class, 'events'])->name('events');
     Route::get('/events/create', [OrganizerController::class, 'createEvent'])->name('events.create');
@@ -103,5 +97,3 @@ Route::middleware(['auth'])->prefix('organizer')->name('organizer.')->group(func
     Route::put('/events/{event}', [OrganizerController::class, 'updateEvent'])->name('events.update');
     Route::delete('/events/{event}', [OrganizerController::class, 'deleteEvent'])->name('events.delete');
 });
-
-

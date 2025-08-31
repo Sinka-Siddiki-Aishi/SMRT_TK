@@ -119,6 +119,9 @@
                                 <a href="{{ route('bookings.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-ticket-alt mr-2 text-blue-500"></i> My Bookings
                                 </a>
+                                <a href="{{ route('user.wallet') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-wallet mr-2 text-yellow-500"></i> My Wallet
+                                </a>
                                 <a href="{{ route('user.booking-history') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-history mr-2 text-green-500"></i> Booking History
                                 </a>
@@ -175,6 +178,9 @@
 
                         <a href="{{ route('bookings.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                             <i class="fas fa-ticket-alt mr-2 text-blue-500"></i> My Bookings
+                        </a>
+                        <a href="{{ route('user.wallet') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                            <i class="fas fa-wallet mr-2 text-yellow-500"></i> My Wallet
                         </a>
                         <a href="{{ route('user.booking-history') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                             <i class="fas fa-history mr-2 text-green-500"></i> Booking History

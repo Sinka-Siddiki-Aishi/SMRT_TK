@@ -123,7 +123,7 @@
                                     <div class="text-xs text-gray-600">Bookings</div>
                                 </div>
                                 <div class="text-center">
-                                    <div class="text-lg font-bold text-gray-900">{{ $event->max_attendees }}</div>
+                                    <div class="text-lg font-bold text-gray-900">{{ $event->capacity }}</div>
                                     <div class="text-xs text-gray-600">Max Capacity</div>
                                 </div>
                             </div>
@@ -154,17 +154,7 @@
                                     </button>
                                 </form>
 
-                                <!-- Delete Button -->
-                                <form method="POST" action="{{ route('organizer.events.delete', $event) }}"
-                                      onsubmit="return confirm('Are you sure you want to permanently delete this event? This action cannot be undone.')"
-                                      class="flex-1">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors">
-                                        <i class="fas fa-trash mr-1"></i>Delete
-                                    </button>
-                                </form>
+                                
                             </div>
                         </div>
                     </div>

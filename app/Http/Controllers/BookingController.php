@@ -6,14 +6,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Event;
-use App\Models\Ticket;
-use App\Models\Deal;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 
+
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -44,78 +46,74 @@ class BookingController extends Controller
    public function store(Request $request, Event $event)
    {
        $request->validate([
-           'ticket_type' => 'required|in:general,vip,premium',
-           'quantity' => 'required|integer|min:1|max:10',
+           'ticket_type' => 'required|string',
+           'quantity' => 'required|integer|min:1',
+           'payment_method' => 'required|string',
        ]);
+       $user = Auth::user();
 
-
-       if (!$event->hasAvailableTickets($request->quantity)) {
-           return back()->with('error', 'Not enough tickets available.');
+       $event = Event::findOrFail($request->input('event_id'));
+       $ticketType = $request->input('ticket_type');
+       $quantity = $request->input('quantity');
+   
+       // Get the price for the specific ticket type
+       $unitPrice = $event->getSmartPricing($ticketType);
+       $totalPrice = $unitPrice * $quantity;
+       $finalPrice = $totalPrice; // Assuming no discount for now
+   
+       // Check if there are enough tickets available
+       if (!$event->hasAvailableTickets($quantity)) {
+           return redirect()->back()->with('error', 'Sorry, there are not enough tickets available.');
        }
-
-
+   
+       // Start a database transaction
        DB::beginTransaction();
+   
        try {
-           $ticketType = $request->ticket_type;
-           $quantity = $request->quantity;
-           $unitPrice = $event->getSmartPricing($ticketType);
-           $totalPrice = $unitPrice * $quantity;
+        // Create the booking with pending status
+        $booking = new Booking([
+            'user_id' => $user->id,
+            'event_id' => $event->id,
+            'ticket_type' => $ticketType,
+            'quantity' => $quantity,
+            'unit_price' => $unitPrice,
+            'total_price' => $totalPrice,
+           'final_price' => $finalPrice,
+           'status' => 'pending', // Initial status
+            'booking_number' => 'BKG' . strtoupper(Str::random(8)),
+        ]);
+        $booking->save(); // Save the booking to get an ID
 
+        // Handle payment
+        if ($request->payment_method === 'wallet') {
+            $withdrawalSuccessful = $user->withdraw($totalPrice, "Payment for booking #{$booking->id}");
 
-           // Apply deals if any
-           $discountAmount = 0;
-           $activeDeals = $event->deals()->active()->get();
-           foreach ($activeDeals as $deal) {
-               $dealDiscount = $deal->calculateDiscount($unitPrice, $quantity);
-               if ($dealDiscount > $discountAmount) {
-                   $discountAmount = $dealDiscount;
-                   $appliedDeal = $deal;
-               }
-           }
+            if (!$withdrawalSuccessful) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Insufficient wallet balance. Payment failed.');
+            }
+        }
 
+        // If payment is successful, update the booking status to 'confirmed'
+        $booking->status = 'confirmed';
+        $booking->save();
 
-           $finalPrice = $totalPrice - $discountAmount;
+        // Deposit the ticket price into the organizer's wallet
+        $organizer = $event->organizer;
+        if ($organizer->wallet) {
+            $organizer->deposit($finalPrice, "Payment for booking #{$booking->id}");
+        }
 
+        // Commit the transaction
+        DB::commit();
 
-           // Create booking
-           $booking = Booking::create([
-               'user_id' => Auth::id(),
-               'event_id' => $event->id,
-               'quantity' => $quantity,
-               'ticket_type' => $ticketType,
-               'unit_price' => $unitPrice,
-               'total_price' => $totalPrice,
-               'discount_amount' => $discountAmount,
-               'final_price' => $finalPrice,
-               'status' => 'confirmed', // In real app, this would be 'pending' until payment
-           ]);
-
-
-           // Generate tickets with QR codes
-           $booking->generateTickets();
-
-
-           // Update event booking count
-           $event->increment('booking_count', $quantity);
-
-
-           // Update deal usage if applied
-           if (isset($appliedDeal)) {
-               $appliedDeal->incrementUsage();
-           }
-
-
-           DB::commit();
-
-
-           return redirect()->route('bookings.show', $booking)
-                          ->with('success', 'Booking confirmed! Your tickets have been generated.');
-
-
-       } catch (\Exception $e) {
-           DB::rollback();
-           return back()->with('error', 'Booking failed. Please try again.');
-       }
+        return redirect()->route('bookings.show', $booking->id)->with('success', 'Booking successful!');
+    } catch (\Exception $e) {
+        // Rollback the transaction on error
+        DB::rollBack();
+        Log::error("Booking failed for user {$user->id} for event {$event->id}: " . $e->getMessage());
+        return redirect()->back()->with('error', 'An error occurred during the booking process. Please try again.');
+    }
    }
 
 
@@ -219,23 +217,36 @@ class BookingController extends Controller
    // Verify QR code
    public function verifyQR($qrCode)
    {
-       $ticket = Ticket::where('qr_code', $qrCode)->first();
-
+       $ticket = Ticket::with(['event.organizer', 'user'])->where('qr_code', $qrCode)->first();
 
        if (!$ticket) {
-           return response()->json(['valid' => false, 'message' => 'Invalid QR code']);
+           return view('tickets.verify', [
+               'status' => 'invalid',
+               'message' => 'This QR code is not associated with any ticket.'
+           ]);
        }
 
+       $viewStatus = 'invalid';
+       $message = '';
 
-       if (!$ticket->isValid()) {
-           return response()->json(['valid' => false, 'message' => 'Ticket is not valid']);
+       if ($ticket->status === 'active' && $ticket->event->date > now()) {
+           $viewStatus = 'valid';
+           $message = 'This is a valid, active ticket.';
+       } elseif ($ticket->status === 'used') {
+           $viewStatus = 'used';
+           $message = 'This ticket has already been used.';
+       } elseif ($ticket->status === 'cancelled') {
+           $message = 'This ticket has been cancelled.';
+       } elseif ($ticket->event->date < now()) {
+           $message = 'This ticket is for a past event and is expired.';
+       } else {
+           $message = 'This ticket is not valid.';
        }
 
-
-       return response()->json([
-           'valid' => true,
-           'ticket' => $ticket->load(['event', 'user']),
-           'message' => 'Valid ticket'
+       return view('tickets.verify', [
+           'status' => $viewStatus,
+           'message' => $message,
+           'ticket' => $ticket
        ]);
    }
 
@@ -257,8 +268,3 @@ class BookingController extends Controller
        return response()->json(['success' => true, 'message' => 'Ticket marked as used']);
    }
 }
-
-
-
-
-

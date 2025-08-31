@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Laravel\Cashier\Billable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +11,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -68,6 +69,46 @@ class User extends Authenticatable
     public function organizedEvents()
     {
         return $this->hasMany(Event::class, 'organizer_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function deposit(float $amount, string $description)
+    {
+        $balance_before = $this->wallet->balance;
+        $this->wallet->increment('balance', $amount);
+        return $this->wallet->transactions()->create([
+            'amount' => $amount,
+            'type' => 'deposit',
+            'description' => $description,
+            'balance_before' => $balance_before,
+            'balance_after' => $this->wallet->balance,
+        ]);
+    }
+
+    public function withdraw(float $amount, string $description)
+    {
+        if ($this->wallet->balance < $amount) {
+            return false;
+        }
+
+        $balance_before = $this->wallet->balance;
+        $this->wallet->decrement('balance', $amount);
+        return $this->wallet->transactions()->create([
+            'amount' => $amount,
+            'type' => 'withdraw',
+            'description' => $description,
+            'balance_before' => $balance_before,
+            'balance_after' => $this->wallet->balance,
+        ]);
     }
 
     // Helper methods

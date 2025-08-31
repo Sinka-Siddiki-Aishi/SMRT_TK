@@ -94,70 +94,90 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <!-- Main Content -->
-            <div class="lg:col-span-2">
                 <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">About This Event</h2>
-                    <div class="prose prose-lg max-w-none text-gray-600">
-                        <p>{{ $event->description }}</p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Rate & Review This Event</h2>
+                    @auth
+                        @php
+                            $userBooking = $event->bookings()
+                                ->where('user_id', Auth::id())
+                                ->where('status', 'confirmed')
+                                ->first();
+                            $eventEnded = $event->date < now();
+                        @endphp
 
-                        <!-- Additional event details would go here -->
-                        <p class="mt-4">Join us for an unforgettable experience that brings together amazing people, incredible entertainment, and memories that will last a lifetime. This event promises to deliver exceptional value and entertainment for all attendees.</p>
+                        @if($userBooking && $eventEnded)
+                            @php
+                                $userRating = $event->ratings()->where('user_id', Auth::id())->first();
+                            @endphp
 
-                        <h3 class="text-xl font-semibold text-gray-900 mt-8 mb-4">What to Expect</h3>
-                        <ul class="list-disc list-inside space-y-2">
-                            <li>World-class entertainment and performances</li>
-                            <li>Networking opportunities with like-minded individuals</li>
-                            <li>Premium food and beverage options</li>
-                            <li>Professional photography and videography</li>
-                            <li>Complimentary parking and coat check</li>
-                        </ul>
-                    </div>
+                            @if($userRating)
+                                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-6">
+                                    <p class="font-bold">You have already rated this event:</p>
+                                    <div class="flex items-center mt-2">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <i class="fas fa-star {{ $i <= $userRating->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                        @endfor
+                                        <span class="ml-2 text-sm text-gray-600">({{ $userRating->rating }} out of 5)</span>
+                                    </div>
+                                    <p class="mt-2 text-gray-800">"{{ $userRating->review }}"</p>
+                                </div>
+                            @else
+                                <form action="{{ route('ratings.store', $event) }}" method="POST">
+                                    @csrf
+                                    <div class="mb-4">
+                                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-2">Your Rating</label>
+                                        <div class="flex items-center">
+                                            <input type="range" id="rating" name="rating" min="1" max="5" class="w-full" oninput="updateRatingStars(this.value)">
+                                            <div id="rating-stars" class="flex ml-4">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <i class="fas fa-star text-gray-300"></i>
+                                                @endfor
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="review" class="block text-sm font-medium text-gray-700">Your Review</label>
+                                        <textarea name="review" id="review" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                                    </div>
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                                        Submit Review
+                                    </button>
+                                </form>
+                            @endif
+                        @elseif($userBooking)
+                            <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg">
+                                <p>You can rate this event after it has ended.</p>
+                            </div>
+                        @else
+                            <div class="bg-gray-100 border-l-4 border-gray-500 text-gray-700 p-4 rounded-lg">
+                                <p>You must book this event to leave a review.</p>
+                            </div>
+                        @endif
+                    @else
+                        <div class="bg-gray-100 border-l-4 border-gray-500 text-gray-700 p-4 rounded-lg">
+                            <p><a href="{{ route('login') }}" class="font-bold text-blue-600 hover:underline">Log in</a> to rate this event.</p>
+                        </div>
+                    @endauth
                 </div>
 
-                <!-- Event Highlights -->
+                <!-- Display existing ratings -->
                 <div class="bg-white rounded-xl shadow-lg p-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Event Highlights</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-star text-blue-600"></i>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">What Others Are Saying</h2>
+                    @forelse($event->ratings as $rating)
+                        <div class="border-b border-gray-200 py-4">
+                            <div class="flex items-center mb-2">
+                                <div class="font-bold mr-2">{{ $rating->user->name }}</div>
+                                <div class="flex">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star {{ $i <= $rating->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                    @endfor
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 mb-2">Premium Experience</h3>
-                                <p class="text-gray-600 text-sm">Carefully curated event with attention to every detail</p>
-                            </div>
+                            <p class="text-gray-600">"{{ $rating->review }}"</p>
                         </div>
-
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-users text-green-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 mb-2">Great Community</h3>
-                                <p class="text-gray-600 text-sm">Connect with amazing people who share your interests</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-camera text-purple-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 mb-2">Memorable Moments</h3>
-                                <p class="text-gray-600 text-sm">Create lasting memories with professional photography</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-gift text-orange-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 mb-2">Special Perks</h3>
-                                <p class="text-gray-600 text-sm">Exclusive benefits and surprises for attendees</p>
-                            </div>
-                        </div>
-                    </div>
+                    @empty
+                        <p class="text-gray-600">No reviews yet. Be the first to share your thoughts!</p>
+                    @endforelse
                 </div>
             </div>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 
 class AuthController extends Controller
@@ -36,10 +37,10 @@ class AuthController extends Controller
 
            // Redirect based on user role
            if ($user->isOrganizer()) {
-               return redirect()->intended(route('organizer.dashboard'));
+               return redirect()->route('organizer.dashboard');
            }
 
-           return redirect()->intended(route('user.dashboard'));
+           return redirect()->route('user.dashboard');
        }
        return back()->withErrors([
            'email' => 'Invalid credentials.',
@@ -57,12 +58,17 @@ class AuthController extends Controller
        ]);
 
 
-       $user = \App\Models\User::create([
-           'name' => $request->name,
-           'email' => $request->email,
-           'password' => bcrypt($request->password),
-           'role' => $request->role,
-       ]);
+       DB::transaction(function () use ($request, &$user) {
+           $user = \App\Models\User::create([
+               'name' => $request->name,
+               'email' => $request->email,
+               'password' => bcrypt($request->password),
+               'role' => $request->role,
+           ]);
+
+           // Create a wallet for the user
+           $user->wallet()->create(['balance' => 1000]); // Give a default balance
+       });
 
 
        Auth::login($user);
@@ -135,4 +141,3 @@ class AuthController extends Controller
        return back()->with('success', 'Password updated successfully!');
    }
 }
-

@@ -143,7 +143,7 @@
                                 Event Time *
                             </label>
                             <input type="time" id="time" name="time" required
-                                   value="{{ old('time', $event->time ? $event->time->format('H:i') : '') }}"
+                                   value="{{ old('time', $event->date ? $event->date->format('H:i') : '') }}"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('time') border-red-500 @enderror">
                             @error('time')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

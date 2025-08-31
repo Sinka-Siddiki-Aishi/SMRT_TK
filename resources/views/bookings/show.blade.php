@@ -106,7 +106,7 @@
                                 <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
                                     {{ ucfirst($ticket->status) }}
                                 </span>
-                                <button onclick="showQRCode('{{ $ticket->qr_code }}')" 
+                                <button onclick="showQRCode('{{ route('tickets.verify', $ticket->qr_code) }}')" 
                                         class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
                                     <i class="fas fa-qrcode mr-1"></i>QR
                                 </button>
@@ -282,7 +282,7 @@ document.getElementById('qr-modal').addEventListener('click', function(e) {
 // Print tickets function
 function printTickets() {
     // Open PDF in new window for printing
-    const pdfUrl = "{{ route('bookings.pdf', $booking) }}";
+    const pdfUrl = "{{ route('bookings.preview', $booking) }}";
     const printWindow = window.open(pdfUrl, '_blank');
 
     // Wait for PDF to load then trigger print

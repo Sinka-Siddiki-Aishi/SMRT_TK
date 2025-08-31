@@ -54,10 +54,7 @@
                                             <div class="space-y-1 text-sm text-gray-600">
                                                 <div class="flex items-center">
                                                     <i class="fas fa-calendar mr-2 text-blue-500"></i>
-                                                    {{ $booking->event->date->format('M d, Y') }}
-                                                    @if($booking->event->time)
-                                                        at {{ $booking->event->time->format('g:i A') }}
-                                                    @endif
+                                                    {{ $booking->event->date->format('M d, Y g:i A') }}
                                                 </div>
                                                 <div class="flex items-center">
                                                     <i class="fas fa-map-marker-alt mr-2 text-red-500"></i>
@@ -79,7 +76,7 @@
                                         </div>
                                         <div>
                                             <div class="text-xs text-gray-500 uppercase tracking-wide">Booked On</div>
-                                            <div class="text-sm font-medium text-gray-900">{{ $booking->created_at->format('M d, Y g:i A') }}</div>
+                                            <div class="text-sm font-medium text-gray-900">{{ $booking->created_at->format('M d, Y') }}</div>
                                         </div>
                                         <div>
                                             <div class="text-xs text-gray-500 uppercase tracking-wide">Total Paid</div>

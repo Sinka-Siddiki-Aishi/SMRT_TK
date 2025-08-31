@@ -64,7 +64,8 @@ class OrganizerController extends Controller
    public function events()
    {
        $events = Auth::user()->organizedEvents()
-                            ->with(['category', 'bookings'])
+                            ->with(['category'])
+                            ->withCount('bookings')
                             ->orderBy('date', 'desc')
                             ->paginate(10);
 
@@ -95,7 +96,7 @@ class OrganizerController extends Controller
            'title' => 'required|string|max:255',
            'description' => 'required|string',
            'date' => 'required|date',
-           'time' => 'required',
+           'time' => 'required|date_format:H:i',
            'end_date' => 'nullable|date|after:date',
            'location' => 'required|string|max:255',
            'venue' => 'nullable|string|max:255',
@@ -119,7 +120,7 @@ class OrganizerController extends Controller
 
        // Combine date and time
        if ($request->date && $request->time) {
-           $eventData['date'] = $request->date . ' ' . $request->time;
+           $eventData['date'] = $request->date . ' ' . $request->time . ':00';
        }
 
        // Remove separate time field since it's combined with date
@@ -215,7 +216,7 @@ class OrganizerController extends Controller
            'title' => 'required|string|max:255',
            'description' => 'required|string',
            'date' => 'required|date',
-           'time' => 'required',
+           'time' => 'required|date_format:H:i',
            'end_date' => 'nullable|date|after:date',
            'location' => 'required|string|max:255',
            'venue' => 'nullable|string|max:255',
@@ -236,7 +237,7 @@ class OrganizerController extends Controller
 
        // Combine date and time
        if ($request->date && $request->time) {
-           $eventData['date'] = $request->date . ' ' . $request->time;
+           $eventData['date'] = $request->date . ' ' . $request->time . ':00';
        }
 
        // Remove separate time field since it's combined with date
@@ -315,6 +316,3 @@ class OrganizerController extends Controller
        return view('organizer.events.bookings', compact('event', 'bookings'));
    }
 }
-
-
-

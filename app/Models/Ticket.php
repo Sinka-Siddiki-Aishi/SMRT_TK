@@ -5,8 +5,8 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\SvgWriter;
 
 
 class Ticket extends Model
@@ -74,14 +74,16 @@ class Ticket extends Model
 
    public function generateQRCode($size = 200)
    {
-       $qrCode = new QrCode($this->getQRCodeUrl());
-       $qrCode->setSize($size);
-       $qrCode->setMargin(10);
+       $builder = new Builder(
+           writer: new SvgWriter(),
+           data: $this->getQRCodeUrl(),
+           size: $size,
+           margin: 10
+       );
 
-       $writer = new PngWriter();
-       $result = $writer->write($qrCode);
+       $result = $builder->build();
 
-       return 'data:image/png;base64,' . base64_encode($result->getString());
+       return 'data:image/svg+xml;base64,' . base64_encode($result->getString());
    }
 }
 

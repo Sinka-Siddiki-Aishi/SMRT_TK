@@ -27,17 +27,6 @@
             text-align: center;
             position: relative;
         }
-
-        .ticket-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
-            background-size: 30px 30px;
-        }
         
         .logo {
             font-size: 28px;

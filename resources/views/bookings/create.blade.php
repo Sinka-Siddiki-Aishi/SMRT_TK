@@ -33,6 +33,8 @@
                     
                     <form action="{{ route('bookings.store', $event) }}" method="POST" id="booking-form">
                         @csrf
+                        <input type="hidden" name="event_id" value="{{ $event->id }}">
+                        <input type="hidden" name="payment_method" value="wallet">
                         
                         <!-- Ticket Type Selection -->
                         <div class="mb-8">
@@ -210,6 +212,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const ticketOptions = document.querySelectorAll('.ticket-option');
     const quantitySelect = document.getElementById('quantity');
+
     const selectedType = document.getElementById('selected-type');
     const selectedQuantity = document.getElementById('selected-quantity');
     const unitPrice = document.getElementById('unit-price');
@@ -230,7 +233,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const subtotalAmount = price * quantity;
             subtotal.textContent = '$' + subtotalAmount.toFixed(2);
-            totalPrice.textContent = '$' + subtotalAmount.toFixed(2);
+
+            let total = subtotalAmount;
+
+            totalPrice.textContent = '$' + total.toFixed(2);
         }
     }
 
@@ -243,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update visual selection
             ticketOptions.forEach(opt => opt.classList.remove('border-blue-500', 'bg-blue-50'));
             this.classList.add('border-blue-500', 'bg-blue-50');
-            
+
             updatePricing();
         });
     });
@@ -251,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
     quantitySelect.addEventListener('change', updatePricing);
 
     // Initialize with first option selected
-    if (ticketOptions.length > 0) {
+    if(ticketOptions.length > 0) {
         ticketOptions[0].click();
     }
 });
