@@ -60,7 +60,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-600">Total Revenue</p>
-                        <p class="text-2xl font-bold text-gray-900">${{ number_format($stats['totalRevenue'], 2) }}</p>
+                        <p class="text-2xl font-bold text-gray-900">৳{{ number_format($stats['totalRevenue'], 2) }}</p>
                     </div>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                                             {{ $event->bookings->sum('quantity') }}/{{ $event->capacity }} sold
                                         </span>
                                         <span class="text-sm text-green-600 font-medium">
-                                            ${{ number_format($event->bookings->sum('final_price'), 2) }}
+                                            ৳{{ number_format($event->bookings->sum('final_price'), 2) }}
                                         </span>
                                     </div>
                                 </div>

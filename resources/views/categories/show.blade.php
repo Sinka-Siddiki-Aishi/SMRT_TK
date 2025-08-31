@@ -174,7 +174,7 @@
                             
                             <div class="mt-6 flex items-center justify-between">
                                 <div class="text-blue-600 font-semibold">
-                                    From ${{ rand(25, 150) }}
+                                    From ৳{{ rand(25, 150) }}
                                 </div>
                                 
                                 <a href="{{ route('events.show', $event->id) }}" 

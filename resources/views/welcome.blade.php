@@ -145,7 +145,7 @@
                             <i class="fas fa-map-marker-alt mr-1"></i>
                             Central Park, NY
                         </div>
-                        <div class="text-blue-600 font-semibold">From $45</div>
+                        <div class="text-blue-600 font-semibold">From ৳45</div>
                     </div>
                 </div>
             </div>
@@ -170,7 +170,7 @@
                             <i class="fas fa-map-marker-alt mr-1"></i>
                             Convention Center, SF
                         </div>
-                        <div class="text-blue-600 font-semibold">From $120</div>
+                        <div class="text-blue-600 font-semibold">From ৳120</div>
                     </div>
                 </div>
             </div>
@@ -195,7 +195,7 @@
                             <i class="fas fa-map-marker-alt mr-1"></i>
                             Broadway Theater, NYC
                         </div>
-                        <div class="text-blue-600 font-semibold">From $85</div>
+                        <div class="text-blue-600 font-semibold">From ৳85</div>
                     </div>
                 </div>
             </div>
@@ -309,5 +309,3 @@
     </div>
 </section>
 @endsection
-
-

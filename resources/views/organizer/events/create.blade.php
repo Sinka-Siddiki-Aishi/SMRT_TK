@@ -86,21 +86,7 @@
                             @enderror
                         </div>
 
-                        <!-- Event Type -->
-                        <div>
-                            <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
-                                Event Type *
-                            </label>
-                            <select id="type" name="type" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('type') border-red-500 @enderror">
-                                <option value="">Select event type</option>
-                                <option value="free" {{ old('type') == 'free' ? 'selected' : '' }}>Free Event</option>
-                                <option value="paid" {{ old('type') == 'paid' ? 'selected' : '' }}>Paid Event</option>
-                            </select>
-                            @error('type')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+
                     </div>
 
                     <!-- Description -->
@@ -207,7 +193,7 @@
                         <!-- Price -->
                         <div>
                             <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-                                Ticket Price ($) *
+                                Ticket Price (Taka) *
                             </label>
                             <input type="number" id="price" name="price" step="0.01" min="0" required
                                    value="{{ old('price') }}"
@@ -218,19 +204,7 @@
                             @enderror
                         </div>
 
-                        <!-- Early Bird Price -->
-                        <div>
-                            <label for="early_bird_price" class="block text-sm font-medium text-gray-700 mb-2">
-                                Early Bird Price ($)
-                            </label>
-                            <input type="number" id="early_bird_price" name="early_bird_price" step="0.01" min="0"
-                                   value="{{ old('early_bird_price') }}"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('early_bird_price') border-red-500 @enderror"
-                                   placeholder="0.00">
-                            @error('early_bird_price')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+
 
                         <!-- Max Attendees -->
                         <div>

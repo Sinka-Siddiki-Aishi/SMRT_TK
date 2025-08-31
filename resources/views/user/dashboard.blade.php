@@ -146,7 +146,7 @@
 
                             <div class="text-right">
                                 <div class="text-sm font-medium text-gray-900">{{ $booking->quantity }} tickets</div>
-                                <div class="text-sm text-gray-600">${{ number_format($booking->final_price, 2) }}</div>
+                                <div class="text-sm text-gray-600">৳{{ number_format($booking->final_price, 2) }}</div>
                             </div>
 
                             <div class="ml-4">
@@ -200,7 +200,7 @@
 
                             <div class="text-right">
                                 <div class="text-sm font-medium text-gray-900">{{ $booking->quantity }} tickets</div>
-                                <div class="text-sm text-gray-600">${{ number_format($booking->final_price, 2) }}</div>
+                                <div class="text-sm text-gray-600">৳{{ number_format($booking->final_price, 2) }}</div>
                             </div>
                         </div>
                     @endforeach

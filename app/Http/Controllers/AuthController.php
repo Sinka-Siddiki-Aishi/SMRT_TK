@@ -80,7 +80,7 @@ class AuthController extends Controller
        }
 
 
-       return redirect('/');
+       return redirect()->route('user.dashboard');
    }
 
 

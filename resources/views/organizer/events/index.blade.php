@@ -111,8 +111,8 @@
                                     {{ $event->location }}
                                 </div>
                                 <div class="flex items-center text-sm text-gray-600">
-                                    <i class="fas fa-dollar-sign mr-2 text-green-500"></i>
-                                    ${{ number_format($event->price, 2) }}
+                                    <i class="fas fa-money-bill-wave mr-2 text-green-500"></i>
+                                    ৳{{ number_format($event->price, 2) }}
                                 </div>
                             </div>
 

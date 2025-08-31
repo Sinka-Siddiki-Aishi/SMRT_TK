@@ -38,7 +38,7 @@ class AnalyticsController extends Controller
                                     $query->where('organizer_id', $organizer->id);
                                 })
                                 ->select(
-                                    DB::raw("strftime('%m', created_at) as month"),
+                                    DB::raw("DATE_FORMAT(created_at, '%m') as month"),
                                     DB::raw('SUM(final_price) as revenue')
                                 )
                                 ->whereYear('created_at', now()->year)

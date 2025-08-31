@@ -71,11 +71,11 @@
                         </div>
                         <div class="flex justify-between py-3 border-b border-gray-200">
                             <span class="text-gray-600">Unit Price:</span>
-                            <span class="font-semibold">${{ number_format($booking->unit_price, 2) }}</span>
+                            <span class="font-semibold">৳{{ number_format($booking->unit_price, 2) }}</span>
                         </div>
                         <div class="flex justify-between py-3 border-b border-gray-200">
                             <span class="text-gray-600">Subtotal:</span>
-                            <span class="font-semibold">${{ number_format($booking->total_price, 2) }}</span>
+                             <span class="font-semibold">৳{{ number_format($booking->total_price, 2) }}</span>
                         </div>
                         @if($booking->discount_amount > 0)
                         <div class="flex justify-between py-3 border-b border-gray-200 text-green-600">
@@ -128,13 +128,6 @@
                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
                             <i class="fas fa-download mr-2"></i>
                             Download PDF Tickets
-                        </a>
-
-                        <!-- Preview PDF -->
-                        <a href="{{ route('bookings.preview', $booking) }}" target="_blank"
-                           class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
-                            <i class="fas fa-eye mr-2"></i>
-                            Preview PDF
                         </a>
 
                         <!-- Print Tickets -->
@@ -281,16 +274,19 @@ document.getElementById('qr-modal').addEventListener('click', function(e) {
 
 // Print tickets function
 function printTickets() {
-    // Open PDF in new window for printing
-    const pdfUrl = "{{ route('bookings.preview', $booking) }}";
-    const printWindow = window.open(pdfUrl, '_blank');
+        const pdfUrl = "{{ route('bookings.stream', $booking) }}";
+        const printWindow = window.open('', '_blank', 'height=600,width=800');
+        printWindow.document.write('<html><head><title>Print Ticket</title>');
+        printWindow.document.write('</head><body style="margin: 0;">');
+        printWindow.document.write('<iframe id="print-iframe" src="' + pdfUrl + '" style="width:100%; height:100%;" frameborder="0"></iframe>');
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
 
-    // Wait for PDF to load then trigger print
-    printWindow.onload = function() {
-        setTimeout(function() {
+        const printIframe = printWindow.document.getElementById('print-iframe');
+        printIframe.onload = function() {
+            printWindow.focus();
             printWindow.print();
-        }, 1000);
-    };
-}
+        };
+    }
 </script>
 @endpush

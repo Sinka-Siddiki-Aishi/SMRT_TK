@@ -103,7 +103,7 @@
                                 {{ $event->city }}, {{ $event->state }}
                             </div>
                             <div class="flex items-center justify-between">
-                                <div class="text-blue-600 font-semibold">From ${{ $event->price }}</div>
+                                <div class="text-blue-600 font-semibold">From ৳{{ $event->price }}</div>
                                 <div class="text-sm text-gray-500">{{ $event->rating_count }} reviews</div>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
                                 {{ $event->city }}, {{ $event->state }}
                             </div>
                             <div class="flex items-center justify-between">
-                                <div class="text-blue-600 font-semibold">From ${{ $event->price }}</div>
+                                <div class="text-blue-600 font-semibold">From ৳{{ $event->price }}</div>
                                 @if($event->rating > 0)
                                 <div class="flex items-center text-sm text-gray-500">
                                     <i class="fas fa-star text-yellow-400 mr-1"></i>
@@ -271,11 +271,11 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <div class="text-blue-600 font-semibold text-lg">
-                                            From ${{ $event->getSmartPricing('general') }}
+                                            From ৳{{ $event->getSmartPricing('general') }}
                                         </div>
                                         @if($event->price != $event->getSmartPricing('general'))
                                             <div class="text-gray-500 text-sm line-through">
-                                                ${{ $event->price }}
+                                                ৳{{ $event->price }}
                                             </div>
                                         @endif
                                     </div>

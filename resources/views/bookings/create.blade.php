@@ -51,9 +51,9 @@
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <div class="text-2xl font-bold text-blue-600">${{ $pricing['general'] }}</div>
+                                            <div class="text-2xl font-bold text-blue-600">৳{{ $pricing['general'] }}</div>
                                             @if($event->price != $pricing['general'])
-                                                <div class="text-sm text-gray-500 line-through">${{ $event->price }}</div>
+                                                <div class="text-sm text-gray-500 line-through">৳{{ $event->price }}</div>
                                             @endif
                                         </div>
                                     </div>
@@ -71,9 +71,9 @@
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <div class="text-2xl font-bold text-purple-600">${{ $pricing['vip'] }}</div>
+                                            <div class="text-2xl font-bold text-purple-600">৳{{ $pricing['vip'] }}</div>
                                             @if($event->vip_price != $pricing['vip'])
-                                                <div class="text-sm text-gray-500 line-through">${{ $event->vip_price }}</div>
+                                                <div class="text-sm text-gray-500 line-through">৳{{ $event->vip_price }}</div>
                                             @endif
                                         </div>
                                     </div>
@@ -92,9 +92,9 @@
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <div class="text-2xl font-bold text-yellow-600">${{ $pricing['premium'] }}</div>
+                                            <div class="text-2xl font-bold text-yellow-600">৳{{ $pricing['premium'] }}</div>
                                             @if($event->premium_price != $pricing['premium'])
-                                                <div class="text-sm text-gray-500 line-through">${{ $event->premium_price }}</div>
+                                                <div class="text-sm text-gray-500 line-through">৳{{ $event->premium_price }}</div>
                                             @endif
                                         </div>
                                     </div>
@@ -229,14 +229,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             selectedType.textContent = type.charAt(0).toUpperCase() + type.slice(1);
             selectedQuantity.textContent = quantity;
-            unitPrice.textContent = '$' + price.toFixed(2);
+            unitPrice.textContent = '৳' + price.toFixed(2);
             
             const subtotalAmount = price * quantity;
-            subtotal.textContent = '$' + subtotalAmount.toFixed(2);
+            subtotal.textContent = '৳' + subtotalAmount.toFixed(2);
 
             let total = subtotalAmount;
 
-            totalPrice.textContent = '$' + total.toFixed(2);
+            totalPrice.textContent = '৳' + total.toFixed(2);
         }
     }
 

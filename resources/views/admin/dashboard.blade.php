@@ -80,7 +80,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm text-gray-600">Total Revenue</p>
-                        <p class="text-2xl font-bold text-gray-900">${{ number_format($stats['total_revenue'], 2) }}</p>
+                        <p class="text-2xl font-bold text-gray-900">৳{{ number_format($stats['total_revenue'], 2) }}</p>
                     </div>
                 </div>
             </div>

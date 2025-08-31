@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Models\Booking;
 use App\Models\Event;
@@ -13,8 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
-
-
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
@@ -23,7 +20,6 @@ class BookingController extends Controller
    {
        $this->middleware('auth');
    }
-
 
    // Show booking form
    public function create(Event $event)
@@ -34,13 +30,10 @@ class BookingController extends Controller
            'premium' => $event->getSmartPricing('premium'),
        ];
 
-
        $activeDeals = $event->deals()->active()->get();
-
 
        return view('bookings.create', compact('event', 'pricing', 'activeDeals'));
    }
-
 
    // Process booking
    public function store(Request $request, Event $event)
@@ -116,19 +109,15 @@ class BookingController extends Controller
     }
    }
 
-
    // Show booking details
    public function show(Booking $booking)
    {
        $this->authorize('view', $booking);
 
-
        $booking->load(['event', 'tickets']);
-
 
        return view('bookings.show', compact('booking'));
    }
-
 
    // User booking history
    public function index()
@@ -138,34 +127,27 @@ class BookingController extends Controller
                              ->orderBy('created_at', 'desc')
                              ->paginate(10);
 
-
        return view('bookings.index', compact('bookings'));
    }
-
 
    // Cancel booking
    public function cancel(Booking $booking)
    {
        $this->authorize('cancel', $booking);
 
-
        if (!$booking->canBeCancelled()) {
            return back()->with('error', 'This booking cannot be cancelled.');
        }
-
 
        DB::beginTransaction();
        try {
            $booking->update(['status' => 'cancelled']);
            $booking->tickets()->update(['status' => 'cancelled']);
 
-
            // Decrease event booking count
            $booking->event->decrement('booking_count', $booking->quantity);
 
-
            DB::commit();
-
 
            return back()->with('success', 'Booking cancelled successfully.');
        } catch (\Exception $e) {
@@ -173,7 +155,6 @@ class BookingController extends Controller
            return back()->with('error', 'Failed to cancel booking.');
        }
    }
-
 
    // Download PDF ticket
    public function downloadPDF(Booking $booking)
@@ -194,8 +175,8 @@ class BookingController extends Controller
        return $pdf->download('SmartTix-Ticket-' . $booking->booking_number . '.pdf');
    }
 
-   // Preview PDF ticket in browser
-   public function previewPDF(Booking $booking)
+   // Stream PDF ticket in browser
+   public function streamPDF(Booking $booking)
    {
        $this->authorize('view', $booking);
 
@@ -210,9 +191,11 @@ class BookingController extends Controller
                      'isRemoteEnabled' => true,
                  ]);
 
-       return $pdf->stream('SmartTix-Ticket-' . $booking->booking_number . '.pdf');
+       return response($pdf->output(), 200, [
+           'Content-Type' => 'application/pdf',
+           'Content-Disposition' => 'inline; filename="SmartTix-Ticket-' . $booking->booking_number . '.pdf"',
+       ]);
    }
-
 
    // Verify QR code
    public function verifyQR($qrCode)
@@ -250,20 +233,16 @@ class BookingController extends Controller
        ]);
    }
 
-
    // Mark ticket as used
    public function useTicket($qrCode)
    {
        $ticket = Ticket::where('qr_code', $qrCode)->first();
 
-
        if (!$ticket || !$ticket->isValid()) {
            return response()->json(['success' => false, 'message' => 'Invalid ticket']);
        }
 
-
        $ticket->markAsUsed();
-
 
        return response()->json(['success' => true, 'message' => 'Ticket marked as used']);
    }

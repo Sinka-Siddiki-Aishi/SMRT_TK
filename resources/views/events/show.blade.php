@@ -56,18 +56,18 @@
                 <!-- Booking Card -->
                 <div class="bg-white rounded-xl shadow-2xl p-8">
                     <div class="text-center mb-6">
-                        <div class="text-3xl font-bold text-gray-900 mb-2">From ${{ rand(25, 150) }}</div>
+                        <div class="text-3xl font-bold text-gray-900 mb-2">From ৳{{ rand(2500, 15000) }}</div>
                         <p class="text-gray-600">per ticket</p>
                     </div>
 
                     <div class="space-y-4 mb-6">
                         <div class="flex justify-between items-center py-2 border-b border-gray-200">
                             <span class="text-gray-600">General Admission</span>
-                            <span class="font-semibold">${{ rand(25, 75) }}</span>
+                            <span class="font-semibold">৳{{ rand(2500, 7500) }}</span>
                         </div>
                         <div class="flex justify-between items-center py-2 border-b border-gray-200">
                             <span class="text-gray-600">VIP Access</span>
-                            <span class="font-semibold">${{ rand(100, 150) }}</span>
+                            <span class="font-semibold">৳{{ rand(10000, 15000) }}</span>
                         </div>
                     </div>
 

@@ -80,7 +80,7 @@
                                         </div>
                                         <div>
                                             <div class="text-xs text-gray-500 uppercase tracking-wide">Total Paid</div>
-                                            <div class="text-sm font-medium text-gray-900">${{ number_format($booking->final_price, 2) }}</div>
+                                            <div class="text-sm font-medium text-gray-900">৳{{ number_format($booking->final_price, 2) }}</div>
                                         </div>
                                     </div>
                                 </div>

@@ -329,18 +329,18 @@
                 
                 <div class="summary-row">
                     <span>Unit Price:</span>
-                    <span>${{ number_format($booking->unit_price, 2) }}</span>
+                    <span>৳{{ number_format($booking->unit_price, 2) }}</span>
                 </div>
                 
                 <div class="summary-row">
                     <span>Subtotal:</span>
-                    <span>${{ number_format($booking->total_price, 2) }}</span>
+                    <span>৳{{ number_format($booking->total_price, 2) }}</span>
                 </div>
                 
                 @if($booking->discount_amount > 0)
                 <div class="summary-row" style="color: #28a745;">
                     <span>Discount:</span>
-                    <span>-${{ number_format($booking->discount_amount, 2) }}</span>
+                    <span>-৳{{ number_format($booking->discount_amount, 2) }}</span>
                 </div>
                 @endif
                 

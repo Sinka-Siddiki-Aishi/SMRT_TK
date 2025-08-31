@@ -75,13 +75,7 @@
                             <!-- Price and Rating -->
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    @if($event->early_bird_price && $event->early_bird_price < $event->price)
-                                        <span class="text-lg font-bold text-green-600">${{ number_format($event->early_bird_price, 2) }}</span>
-                                        <span class="text-sm text-gray-500 line-through ml-1">${{ number_format($event->price, 2) }}</span>
-                                        <span class="text-xs text-green-600 ml-1">Early Bird</span>
-                                    @else
-                                        <span class="text-lg font-bold text-gray-900">${{ number_format($event->price, 2) }}</span>
-                                    @endif
+                                    <span class="text-lg font-bold text-gray-900">৳{{ number_format($event->price, 2) }}</span>
                                 </div>
                                 
                                 @if($event->rating > 0)

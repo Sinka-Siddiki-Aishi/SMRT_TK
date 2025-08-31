@@ -10,7 +10,7 @@
                 <div class="card-header">My Wallet</div>
 
                 <div class="card-body">
-                    <p>Current Balance: ${{ auth()->user()->wallet->balance }}</p>
+                    <p>Current Balance: ৳{{ auth()->user()->wallet->balance }}</p>
 
                     <form action="{{ route('user.wallet.recharge') }}" method="POST">
                         @csrf

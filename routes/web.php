@@ -59,15 +59,15 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Booking routes (authenticated users only)
 Route::middleware('auth')->group(function () {
-    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
-    Route::get('/events/{event}/book', [BookingController::class, 'create'])->name('bookings.create');
-    Route::post('/events/{event}/book', [BookingController::class, 'store'])->name('bookings.store');
+    Route::get('/bookings/create/{event}', [BookingController::class, 'create'])->name('bookings.create');
+    Route::post('/bookings/{event}', [BookingController::class, 'store'])->name('bookings.store');
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::get('/bookings/{booking}/pdf', [BookingController::class, 'downloadPDF'])->name('bookings.pdf');
-    Route::get('/bookings/{booking}/preview', [BookingController::class, 'previewPDF'])->name('bookings.preview');
+    Route::get('/bookings/{booking}/stream', [BookingController::class, 'streamPDF'])->name('bookings.stream');
 
-    // Ticket verification route
+    // Ticket Verification
     Route::get('/tickets/verify/{qr_code}', [BookingController::class, 'verifyQR'])->name('tickets.verify');
 
     // Profile routes
